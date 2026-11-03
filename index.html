@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Чамд зориулсан бяцхан урилга ✨💖</title>
   
   <!-- Favicon -->
@@ -26,8 +26,11 @@
   <div class="ambient-glow glow-1"></div>
   <div class="ambient-glow glow-2"></div>
 
+  <!-- Background Music Element -->
+  <audio id="bgAudio" loop preload="auto"></audio>
+
   <!-- Music toggle button -->
-  <button id="musicToggle" class="music-toggle" title="Ая тоглуулах/зогсоох" aria-label="Music toggle">
+  <button id="musicToggle" class="music-toggle" title="Ая тоглуулах / зогсоох" aria-label="Music toggle">
     <span class="music-icon">🎵</span>
   </button>
 
@@ -63,14 +66,16 @@
         Энэ өдрүүдэд надтай хамт дурсамж бүтээж, болзоонд явах уу? 🌹
       </p>
 
-      <div class="action-buttons-wrap">
+      <div class="action-buttons-wrap" id="actionButtonsWrap">
         <button id="btnYes" class="btn btn-primary pulse-btn">
           <span>Тэгье ээ! 🥰</span>
           <span class="btn-sub">Тэртээ тэргүй хүлээж байлаа</span>
         </button>
-        <button id="btnNo" class="btn btn-secondary runaway-btn">
-          Үгүй ээ 😜
-        </button>
+        <div class="runaway-container" id="runawayContainer">
+          <button id="btnNo" class="btn btn-secondary runaway-btn">
+            Үгүй ээ 😜
+          </button>
+        </div>
       </div>
 
       <p class="hint-text">
@@ -84,7 +89,7 @@
     <section class="screen" id="screenDateTime">
       <div class="screen-header">
         <span class="section-badge">🗓️ 1-р алхам</span>
-        <h2>Хэзээ уулзвал чамд тухтай вэ?</h2>
+        <h2>Хэзээ уулзвал тухтай вэ?</h2>
         <p>Би чамдаа зориулж цагаа бүрэн зохицуулна аа ✨</p>
       </div>
 
@@ -109,7 +114,7 @@
 
       <div class="form-group">
         <label class="form-label">⏰ Өдрийн ямар цагт хамгийн тохиромжтой вэ?</label>
-        <div class="choice-cards-grid grid-2">
+        <div class="choice-cards-grid">
           <div class="choice-card active" data-time="Өдрийн хоол (12:00 - 15:00)">
             <span class="card-icon">🌞</span>
             <div class="card-info">
@@ -124,13 +129,6 @@
               <div class="card-sub">Үдшийн хоол & дулаан яриа</div>
             </div>
           </div>
-          <div class="choice-card" data-time="Шөнийн хот харах (21:00-с хойш)">
-            <span class="card-icon">🌙</span>
-            <div class="card-info">
-              <div class="card-title">Шөнийн хот харах</div>
-              <div class="card-sub">Хот дээрээс тольдох & дуу</div>
-            </div>
-          </div>
           <div class="choice-card" data-time="Чамд тааламжтай ямар ч цагт">
             <span class="card-icon">⏳</span>
             <div class="card-info">
@@ -141,9 +139,11 @@
         </div>
       </div>
 
-      <div class="step-nav-buttons">
-        <button type="button" class="btn btn-outline btn-prev" data-to="screenHero">Буцах</button>
-        <button type="button" class="btn btn-primary btn-next" data-to="screenFood">Дараах ➔</button>
+      <!-- Step 1 has NO Back button as requested -->
+      <div class="step-nav-buttons single-btn">
+        <button type="button" class="btn btn-primary btn-next" data-to="screenFood">
+          Дараах алхам ➔
+        </button>
       </div>
     </section>
 
@@ -236,7 +236,7 @@
           <span class="card-icon">🎬</span>
           <div class="card-info">
             <div class="card-title">Кино үзэх</div>
-            <div class="card-sub">Попкорн идээд шинэ кино үзэх</div>
+            <div class="card-sub">Попкорн идээд кино үзэх</div>
           </div>
         </div>
 
@@ -244,7 +244,7 @@
           <span class="card-icon">🎳</span>
           <div class="card-info">
             <div class="card-title">Хөгжилтэй тоглоом</div>
-            <div class="card-sub">Arcade тоглох эсвэл боулинг</div>
+            <div class="card-sub">Arcade эсвэл боулинг тоглох</div>
           </div>
         </div>
 
@@ -252,25 +252,23 @@
           <span class="card-icon">🎨</span>
           <div class="card-info">
             <div class="card-title">Арт үзэсгэлэн</div>
-            <div class="card-sub">Зураг урлаг үзэж, зураг татуулах</div>
+            <div class="card-sub">Урлаг үзэж, зураг татуулах</div>
           </div>
         </div>
 
-        <div class="choice-card" data-act="Машинд дуу сонсож давхих 🚗🎶">
-          <span class="card-icon">🚗</span>
+        <!-- Custom Activity Option -->
+        <div class="choice-card" id="customActCard" data-act="custom" style="grid-column: 1 / -1;">
+          <span class="card-icon">✍️</span>
           <div class="card-info">
-            <div class="card-title">Шөнийн drive</div>
-            <div class="card-sub">Гоё дуу тавиад хотоор давхих</div>
+            <div class="card-title">Өөр зүйл хийе</div>
+            <div class="card-sub">Өөрийн хүссэн санаагаа бичих ✨</div>
           </div>
         </div>
+      </div>
 
-        <div class="choice-card" data-act="Бүгдийг нь хиймээр байна 🥰💖">
-          <span class="card-icon">💖</span>
-          <div class="card-info">
-            <div class="card-title">Бүгдийг нь зэрэг!</div>
-            <div class="card-sub">Цаг хугацааг зогсоож байгаад л хэхэ</div>
-          </div>
-        </div>
+      <!-- Custom Activity Input Box (opens when 'custom' card is chosen) -->
+      <div id="customActInputWrap" class="custom-act-input-wrap" style="display: none;">
+        <input type="text" id="customActivityInput" class="custom-input" placeholder="Юу хийхийг хүсэж байгаагаа энд бичээрэй... 🌸">
       </div>
 
       <div class="step-nav-buttons">
@@ -280,46 +278,45 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- SCREEN 5: DETAILS & NOTES (FINAL FORM)       -->
+    <!-- SCREEN 5: REVIEW & PIN VERIFICATION (PURE REVIEW) -->
     <!-- ============================================ -->
     <section class="screen" id="screenDetails">
       <div class="screen-header">
-        <span class="section-badge">💌 Сүүлийн алхам</span>
-        <h2>Бараг бэлэн боллоо!</h2>
+        <span class="section-badge">💌 4-р алхам</span>
+        <h2>Төлөвлөгөөгөө шалгаарай</h2>
         <p>Би чамдаа зориулж хамгийн төгс болзоог бэлдье 💕</p>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="userNameInput">
-          👤 Чиний нэр (эсвэл өхөөрдсөн нэр чинь):
-        </label>
-        <input type="text" id="userNameInput" class="custom-input" placeholder="Жишээ: Хөөрхнөө, Намуунаа...">
+      <!-- Pure Review Summary Card -->
+      <div class="review-card">
+        <div class="review-header">
+          <span class="review-tag">ХЯНАХ ХУУДАС 📋</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">📅 Огноо:</span>
+          <span class="review-val" id="summaryDate">-</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">⏰ Цаг:</span>
+          <span class="review-val" id="summaryTime">-</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">🍝 Хоолны сонголт:</span>
+          <span class="review-val" id="summaryFood">-</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">🎡 Төлөвлөгөө:</span>
+          <span class="review-val" id="summaryActivity">-</span>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="musicNoteInput">
-          🎵 Болзоон дээр ямар дуу сонсмоор байна? (эсвэл онцгой хүсэлт):
+      <!-- PIN Code Verification Box -->
+      <div class="pin-verify-group">
+        <label class="form-label" for="pinInput" style="text-align: center; margin-bottom: 0.5rem;">
+          🔒 Баталгаажуулах нууц код оруулна уу:
         </label>
-        <textarea id="musicNoteInput" class="custom-textarea" rows="3" placeholder="Дуртай дууны чинь нэр, цэцэгний сонголт, эсвэл хэлэхийг хүссэн ямар нэг зүйл..."></textarea>
-      </div>
-
-      <div class="summary-preview-box">
-        <div class="summary-title">Төлөвлөгөөний хураангуй ✨</div>
-        <div class="summary-item">
-          <span>📅 Огноо:</span>
-          <b id="summaryDate">-</b>
-        </div>
-        <div class="summary-item">
-          <span>⏰ Цаг:</span>
-          <b id="summaryTime">-</b>
-        </div>
-        <div class="summary-item">
-          <span>🍝 Хоол:</span>
-          <b id="summaryFood">-</b>
-        </div>
-        <div class="summary-item">
-          <span>🎡 Төлөвлөгөө:</span>
-          <b id="summaryActivity">-</b>
+        <div class="pin-box-wrapper">
+          <input type="password" id="pinInput" class="pin-input" maxlength="4" placeholder="••••" inputmode="numeric" autocomplete="off">
         </div>
       </div>
 
@@ -335,13 +332,13 @@
     <!-- SCREEN 6: SUCCESS CELEBRATION                -->
     <!-- ============================================ -->
     <section class="screen" id="screenSuccess">
-      <div class="celebrate-badge">🎉 Урилгыг хүлээн авлаа! 🎉</div>
+      <div class="celebrate-badge">🎉 Болзоо товлогдлоо! 🎉</div>
       
       <div class="success-heart-animation">
         <span class="big-heart">💖</span>
       </div>
 
-      <h1 class="success-title">Болзоо албан ёсоор товлогдлоо! 🥰</h1>
+      <h1 class="success-title">Урилгыг хүлээн авлаа! 🥰</h1>
       <p class="success-desc">
         Бүх хариулт чинь надад амжилттай ирлээ. Чамайгаа харах тэр мөчийг тэсэн ядан хүлээж байя!
       </p>
@@ -387,8 +384,8 @@
         </div>
 
         <div class="ticket-footer">
-          <span>🎟️ Код: LOVE-2026-FOREVER</span>
-          <span>📍 Чиний инээмсэглэлд зориулав</span>
+          <span>🎟️ Нууц код: 1016</span>
+          <span>📍 Зөвхөн чамд зориулав</span>
         </div>
       </div>
 
