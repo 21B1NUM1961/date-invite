@@ -95,20 +95,20 @@
 
       <div class="form-group">
         <label class="form-label">📅 Болзох өдрөө сонгоорой:</label>
-        <div class="quick-pill-grid">
-          <button type="button" class="pill-btn date-pill active" data-date="Энэ амралтын өдрүүдээр">
-            🎈 Энэ амралтын өдрүүдээр
+        <div class="date-pills-row">
+          <button type="button" class="pill-btn date-pill active" data-date="Энэ амралтын өдрөөр">
+            🎈 Энэ амралтаар
           </button>
-          <button type="button" class="pill-btn date-pill" data-date="Ирэх 7 хоногийн баасан гариг">
+          <button type="button" class="pill-btn date-pill" data-date="Ирэх Баасан гараг">
             ✨ Ирэх Баасанд
           </button>
-          <button type="button" class="pill-btn date-pill" data-date="Ирэх амралтын өдрөөр">
-            🌸 Дараагийн амралтын өдөр
+          <button type="button" class="pill-btn date-pill" data-date="Дараа амралтын өдөр">
+            🌸 Дараа амралтаар
           </button>
         </div>
-        <div class="custom-date-wrap">
-          <span class="or-divider">эсвэл тусгай өдөр товлох:</span>
-          <input type="date" id="customDateInput" class="custom-input">
+        <div class="custom-date-inline" id="customDateWrap">
+          <span class="custom-date-label">📅 Тусгай өдөр:</span>
+          <input type="date" id="customDateInput" class="custom-date-input">
         </div>
       </div>
 
@@ -318,6 +318,7 @@
         <div class="pin-box-wrapper">
           <input type="password" id="pinInput" class="pin-input" maxlength="4" placeholder="••••" inputmode="numeric" autocomplete="off">
         </div>
+        <p class="pin-hint-text">Илгээхийн тулд 1016 нууц кодыг оруулна уу ✨</p>
       </div>
 
       <div class="step-nav-buttons">
