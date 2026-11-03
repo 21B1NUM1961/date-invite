@@ -1,5 +1,5 @@
 /**
- * DATE INVITATION WEB APP - INTERACTIVE SCRIPT
+ * DATE INVITATION WEB APP - INTERACTIVE SCRIPT (MOBILE OPTIMIZED)
  */
 
 (function () {
@@ -8,6 +8,8 @@
   // Config fallback
   const config = window.CONFIG || {
     GOOGLE_SCRIPT_URL: "",
+    secretPasscode: "1016",
+    musicUrl: "music.mp3",
     inviterName: "Миний бие",
     defaultCrushName: "Хөөрхнөө",
     heroTitle: "Хөөе хөөрхнөө... ✨",
@@ -24,7 +26,7 @@
     ]
   };
 
-  // URL query parameter-ээс script URL авч болох боломж (хурдан тестлэхэд)
+  // URL query parameter-ээс script URL авах боломж
   const urlParams = new URLSearchParams(window.location.search);
   const overrideScriptUrl = urlParams.get('sheet');
   const targetScriptUrl = overrideScriptUrl || config.GOOGLE_SCRIPT_URL;
@@ -36,7 +38,7 @@
     time: "Өдрийн хоол (12:00 - 15:00)",
     food: "Итали хоол & Паста 🍝",
     activity: "Үдэш хамтдаа алхах 🚶‍♀️✨",
-    name: "",
+    name: config.defaultCrushName || "Хөөрхнөө",
     notes: ""
   };
 
@@ -57,13 +59,17 @@
   const btnSubmit = document.getElementById('btnSubmit');
   const btnRestart = document.getElementById('btnRestart');
   const musicToggle = document.getElementById('musicToggle');
+  const bgAudio = document.getElementById('bgAudio');
   const toast = document.getElementById('toast');
   const loadingOverlay = document.getElementById('loadingOverlay');
 
   // Input & summary elements
   const customDateInput = document.getElementById('customDateInput');
-  const userNameInput = document.getElementById('userNameInput');
-  const musicNoteInput = document.getElementById('musicNoteInput');
+  const customActCard = document.getElementById('customActCard');
+  const customActInputWrap = document.getElementById('customActInputWrap');
+  const customActivityInput = document.getElementById('customActivityInput');
+  const pinInput = document.getElementById('pinInput');
+
   const summaryDate = document.getElementById('summaryDate');
   const summaryTime = document.getElementById('summaryTime');
   const summaryFood = document.getElementById('summaryFood');
@@ -75,58 +81,53 @@
   const ticketDateTime = document.getElementById('ticketDateTime');
   const ticketPlan = document.getElementById('ticketPlan');
 
-  // Audio Context for sweet chime
-  let audioCtx = null;
-  let isPlayingMelody = false;
-  let melodyInterval = null;
-
   // 1. Initial Personalization
   if (config.heroTitle) document.getElementById('heroTitle').textContent = config.heroTitle;
   if (config.heroSubtitle) document.getElementById('heroSubtitle').textContent = config.heroSubtitle;
   ticketInviter.textContent = config.inviterName || "Би";
+  ticketName.textContent = config.defaultCrushName || "Хөөрхнөө";
 
   // Floating background hearts
   createFloatingHearts();
 
-  // 2. Playful "No" button runaway logic
+  // 2. Playful "No" button runaway logic (Controlled bounds - NO page stretching!)
   let noAttempts = 0;
   let yesScale = 1;
 
-  function moveNoButton() {
+  function moveNoButton(e) {
+    if (e && e.type === 'touchstart') {
+      e.preventDefault();
+    }
     noAttempts++;
-    playChime(150, 'triangle', 0.1);
+    playChime(160, 'triangle', 0.1);
 
     // Button text change
     const phrases = config.noButtonPhrases;
     btnNo.textContent = phrases[noAttempts % phrases.length];
 
-    // Enlarge "Yes" button
-    yesScale += 0.08;
-    if (yesScale <= 1.45) {
-      btnYes.style.transform = `scale(${yesScale})`;
-    }
+    // Gently enlarge "Yes" button & increase romantic glow WITHOUT exceeding mobile width
+    yesScale += 0.04;
+    const clampedScale = Math.min(1.12, yesScale);
+    btnYes.style.transform = `scale(${clampedScale})`;
+    btnYes.style.boxShadow = `0 8px ${18 + (clampedScale - 1) * 80}px rgba(244, 63, 94, ${Math.min(0.8, 0.4 + (clampedScale - 1) * 2)})`;
 
-    // Move "No" button within action container
-    const randomX = (Math.random() - 0.5) * 220;
-    const randomY = (Math.random() - 0.5) * 80;
+    // Bound the runaway movement safely within mobile screen margins
+    const maxX = 65;
+    const maxY = 28;
+    const randomX = (Math.random() - 0.5) * (maxX * 2);
+    const randomY = (Math.random() - 0.5) * (maxY * 2);
     btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
   }
 
-  // Support both desktop hover and mobile touch
   btnNo.addEventListener('mouseenter', moveNoButton);
-  btnNo.addEventListener('touchstart', function (e) {
-    e.preventDefault();
-    moveNoButton();
-  });
-  btnNo.addEventListener('click', function (e) {
-    e.preventDefault();
-    moveNoButton();
-  });
+  btnNo.addEventListener('touchstart', moveNoButton, { passive: false });
+  btnNo.addEventListener('click', moveNoButton);
 
   // 3. "Yes" button click -> Confetti & Next screen
   btnYes.addEventListener('click', () => {
     fireConfetti();
     playRomanticChime();
+    startMusic(); // Start background music if not started
     switchScreen('screenDateTime', 1);
   });
 
@@ -170,12 +171,16 @@
     // If entering screenDetails, refresh summary
     if (screenId === 'screenDetails') {
       updateSummary();
+      if (pinInput) {
+        pinInput.value = '';
+        pinInput.classList.remove('shake');
+      }
     }
   }
 
-  // Setup navigation buttons (data-to and data-prev)
+  // Setup navigation buttons
   document.querySelectorAll('.btn-next, .btn-prev').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', () => {
       const targetScreen = btn.getAttribute('data-to');
       if (targetScreen && screens[targetScreen]) {
         playChime(320, 'sine', 0.08);
@@ -204,7 +209,7 @@
   });
 
   // 6. Generic card group selector helper
-  function setupCardGroup(selector, stateKey) {
+  function setupCardGroup(selector, stateKey, onSelect) {
     const cards = document.querySelectorAll(selector);
     cards.forEach(card => {
       card.addEventListener('click', () => {
@@ -216,6 +221,7 @@
         if (val) {
           state[stateKey] = val;
           playChime(440, 'sine', 0.06);
+          if (onSelect) onSelect(val, card);
         }
       });
     });
@@ -223,9 +229,25 @@
 
   setupCardGroup('#screenDateTime .choice-card', 'time');
   setupCardGroup('#foodGrid .choice-card', 'food');
-  setupCardGroup('#activityGrid .choice-card', 'activity');
 
-  // 7. Update Summary
+  // Activity cards + Custom Activity handler
+  setupCardGroup('#activityGrid .choice-card', 'activity', (val, card) => {
+    if (val === 'custom') {
+      customActInputWrap.style.display = 'block';
+      customActivityInput.focus();
+      state.activity = customActivityInput.value.trim() ? `✍️ ${customActivityInput.value.trim()}` : "Өөр зүйл хийх (Тусгай санаа)";
+    } else {
+      customActInputWrap.style.display = 'none';
+    }
+  });
+
+  if (customActivityInput) {
+    customActivityInput.addEventListener('input', (e) => {
+      state.activity = e.target.value.trim() ? `✍️ ${e.target.value.trim()}` : "Өөр зүйл хийх (Тусгай санаа)";
+    });
+  }
+
+  // 7. Update Summary in Review Screen
   function updateSummary() {
     summaryDate.textContent = state.date || "Сонгоогүй";
     summaryTime.textContent = state.time || "Сонгоогүй";
@@ -233,27 +255,39 @@
     summaryActivity.textContent = state.activity || "Сонгоогүй";
   }
 
-  // 8. Submit to Google Sheets
+  // 8. Submit to Google Sheets (Protected by PIN 1016)
   btnSubmit.addEventListener('click', async () => {
-    state.name = userNameInput.value.trim() || config.defaultCrushName;
-    state.notes = musicNoteInput.value.trim();
+    const enteredPin = (pinInput ? pinInput.value.trim() : "");
+    const correctPin = String(config.secretPasscode || "1016").trim();
+
+    // Verify 1016 PIN Code
+    if (enteredPin !== correctPin) {
+      if (pinInput) {
+        pinInput.classList.remove('shake');
+        void pinInput.offsetWidth; // trigger reflow
+        pinInput.classList.add('shake');
+        pinInput.focus();
+      }
+      playErrorTone();
+      showToast("Нууц код буруу байна! (Зөв код оруулна уу 🙈)");
+      return;
+    }
 
     // Show loading
     loadingOverlay.style.display = 'flex';
 
     const payload = {
-      name: state.name,
-      answer: state.answer,
+      name: config.defaultCrushName || "Хөөрхнөө",
+      answer: "Тийм 🥰 (Зөвшөөрсөн)",
       date: state.date,
       time: state.time,
       food: state.food,
       activity: state.activity,
-      notes: state.notes || "Байхгүй"
+      notes: "Нууц код: 1016 баталгаажсан"
     };
 
     try {
       if (targetScriptUrl && targetScriptUrl.startsWith("http")) {
-        // Submit via no-cors fetch (Google Apps Script handles text/plain JSON without CORS issues)
         await fetch(targetScriptUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -264,19 +298,18 @@
         });
         showToast("Мэдээлэл Google Sheet рүү амжилттай илгээгдлээ! 💌");
       } else {
-        console.warn("Google Script URL тохируулагдаагүй байна. config.js файлыг шалгана уу.");
-        showToast("Урилга амжилттай бүртгэгдлээ! (Туршилтын горим) ✨");
+        console.warn("Google Script URL тохируулагдаагүй байна.");
+        showToast("Урилга амжилттай бүртгэгдлээ! ✨");
       }
     } catch (err) {
       console.error("Илгээхэд алдаа гарлаа:", err);
       showToast("Илгээгдлээ! (Холболт шалгагдлаа)");
     } finally {
-      // Delay for sweet transition
       setTimeout(() => {
         loadingOverlay.style.display = 'none';
         
         // Fill Date Ticket details
-        ticketName.textContent = state.name;
+        ticketName.textContent = config.defaultCrushName || "Хөөрхнөө";
         ticketDateTime.textContent = `${state.date} • ${state.time.split(' ')[0]}`;
         ticketPlan.textContent = `${state.food} + ${state.activity}`;
 
@@ -293,8 +326,12 @@
     switchScreen('screenHero', 0);
   });
 
-  // 10. Web Audio API Chimes (Zero external audio dependency!)
-  function initAudio() {
+  // 10. Audio & Melodic Player Logic
+  let audioCtx = null;
+  let isPlayingMusic = false;
+  let synthMelodyInterval = null;
+
+  function initAudioContext() {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -305,12 +342,12 @@
 
   function playChime(freq = 440, type = 'sine', duration = 0.2) {
     try {
-      initAudio();
+      initAudioContext();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = type;
       osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -319,8 +356,13 @@
     } catch (e) {}
   }
 
+  function playErrorTone() {
+    playChime(220, 'sawtooth', 0.18);
+    setTimeout(() => playChime(190, 'sawtooth', 0.22), 100);
+  }
+
   function playRomanticChime() {
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.50];
     notes.forEach((freq, i) => {
       setTimeout(() => playChime(freq, 'sine', 0.4), i * 90);
     });
@@ -333,30 +375,89 @@
     });
   }
 
-  // Music toggle button (Cute Lofi Melodic sequence)
+  // Melodic Web Audio Synthesizer (Warm acoustic piano/music-box arpeggios fallback)
+  function playMelodicSynth() {
+    // Beautiful romantic Canon in D chord progression notes
+    const chords = [
+      [587.33, 739.99, 880.00], // D major
+      [440.00, 554.37, 659.25], // A major
+      [493.88, 587.33, 739.99], // B minor
+      [369.99, 440.00, 554.37], // F# minor
+      [392.00, 493.88, 587.33], // G major
+      [293.66, 369.99, 440.00], // D major
+      [392.00, 493.88, 587.33], // G major
+      [440.00, 554.37, 659.25]  // A major
+    ];
+
+    let chordIdx = 0;
+    let noteIdx = 0;
+
+    synthMelodyInterval = setInterval(() => {
+      if (!isPlayingMusic) return;
+      initAudioContext();
+      const currentChord = chords[chordIdx];
+      const freq = currentChord[noteIdx];
+      
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.045, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.65);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.65);
+      } catch (e) {}
+
+      noteIdx++;
+      if (noteIdx >= currentChord.length) {
+        noteIdx = 0;
+        chordIdx = (chordIdx + 1) % chords.length;
+      }
+    }, 380);
+  }
+
+  function startMusic() {
+    if (isPlayingMusic) return;
+
+    if (config.musicUrl && bgAudio) {
+      bgAudio.src = config.musicUrl;
+      bgAudio.play().then(() => {
+        isPlayingMusic = true;
+        musicToggle.classList.add('playing');
+      }).catch(() => {
+        // If local mp3 not found or blocked, fall back to soft melodic synth
+        isPlayingMusic = true;
+        musicToggle.classList.add('playing');
+        playMelodicSynth();
+      });
+    } else {
+      isPlayingMusic = true;
+      musicToggle.classList.add('playing');
+      playMelodicSynth();
+    }
+  }
+
+  function pauseMusic() {
+    isPlayingMusic = false;
+    musicToggle.classList.remove('playing');
+    if (bgAudio) bgAudio.pause();
+    if (synthMelodyInterval) {
+      clearInterval(synthMelodyInterval);
+      synthMelodyInterval = null;
+    }
+  }
+
   musicToggle.addEventListener('click', () => {
-    initAudio();
-    if (isPlayingMelody) {
-      clearInterval(melodyInterval);
-      isPlayingMelody = false;
-      musicToggle.classList.remove('playing');
+    initAudioContext();
+    if (isPlayingMusic) {
+      pauseMusic();
       showToast("Ая түр зогслоо ⏸️");
     } else {
-      isPlayingMelody = true;
-      musicToggle.classList.add('playing');
-      showToast("Романтик ая эхэллээ 🎶💖");
-      
-      const melody = [
-        392.00, 440.00, 523.25, 659.25,
-        587.33, 523.25, 440.00, 392.00,
-        349.23, 392.00, 440.00, 523.25
-      ];
-      let noteIndex = 0;
-      playChime(melody[0], 'sine', 0.35);
-      melodyInterval = setInterval(() => {
-        noteIndex = (noteIndex + 1) % melody.length;
-        playChime(melody[noteIndex], 'sine', 0.4);
-      }, 420);
+      startMusic();
+      showToast("Уянгалаг романтик ая эхэллээ 🎶💖");
     }
   });
 
@@ -364,8 +465,8 @@
   function fireConfetti() {
     if (typeof confetti === 'function') {
       confetti({
-        particleCount: 70,
-        spread: 60,
+        particleCount: 50,
+        spread: 55,
         origin: { y: 0.75 },
         colors: ['#f43f5e', '#ec4899', '#8b5cf6', '#fb7185', '#ffd1dc']
       });
@@ -374,21 +475,21 @@
 
   function fireMassiveConfetti() {
     if (typeof confetti !== 'function') return;
-    const duration = 2.5 * 1000;
+    const duration = 2.2 * 1000;
     const end = Date.now() + duration;
 
     (function frame() {
       confetti({
-        particleCount: 5,
+        particleCount: 4,
         angle: 60,
-        spread: 55,
+        spread: 50,
         origin: { x: 0 },
         colors: ['#f43f5e', '#ec4899', '#a855f7', '#fbbf24']
       });
       confetti({
-        particleCount: 5,
+        particleCount: 4,
         angle: 120,
-        spread: 55,
+        spread: 50,
         origin: { x: 1 },
         colors: ['#f43f5e', '#ec4899', '#a855f7', '#fbbf24']
       });
@@ -409,15 +510,15 @@
       const heart = document.createElement('div');
       heart.className = 'floating-heart';
       heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      heart.style.left = `${Math.random() * 96}%`;
-      heart.style.fontSize = `${16 + Math.random() * 18}px`;
+      heart.style.left = `${Math.random() * 92}%`;
+      heart.style.fontSize = `${14 + Math.random() * 16}px`;
       heart.style.animationDuration = `${6 + Math.random() * 5}s`;
       container.appendChild(heart);
 
       setTimeout(() => {
         heart.remove();
-      }, 11000);
-    }, 900);
+      }, 10000);
+    }, 1100);
   }
 
   // 13. Toast Notification
@@ -426,7 +527,7 @@
     toast.classList.add('show');
     setTimeout(() => {
       toast.classList.remove('show');
-    }, 3200);
+    }, 3000);
   }
 
 })();
