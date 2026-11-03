@@ -191,10 +191,13 @@
 
   // 5. Date selection pills & custom input
   const datePills = document.querySelectorAll('.date-pill');
+  const customDateWrap = document.getElementById('customDateWrap');
+
   datePills.forEach(pill => {
     pill.addEventListener('click', () => {
       datePills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
+      if (customDateWrap) customDateWrap.classList.remove('active');
       state.date = pill.getAttribute('data-date');
       customDateInput.value = '';
       playChime(400, 'sine', 0.05);
@@ -204,6 +207,7 @@
   customDateInput.addEventListener('change', (e) => {
     if (e.target.value) {
       datePills.forEach(p => p.classList.remove('active'));
+      if (customDateWrap) customDateWrap.classList.add('active');
       state.date = `${e.target.value} өдөр`;
     }
   });
