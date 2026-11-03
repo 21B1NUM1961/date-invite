@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Чамд зориулсан бяцхан урилга ✨💖</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Floating background particles -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- Ambient light glow effects -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Music toggle button -->
+  <button id="musicToggle" class="music-toggle" title="Ая тоглуулах/зогсоох" aria-label="Music toggle">
+    <span class="music-icon">🎵</span>
+  </button>
+
+  <main class="app-card">
+    <!-- Progress Indicator -->
+    <div class="progress-bar-wrap" id="progressBarWrap" style="display: none;">
+      <div class="progress-steps">
+        <span class="step-dot active" data-step="1">1</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="2">2</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="3">3</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="4">4</span>
+      </div>
+      <div class="progress-label" id="progressLabel">Алхам 1 / 4</div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 1: HERO / THE QUESTION                -->
+    <!-- ============================================ -->
+    <section class="screen active" id="screenHero">
+      <div class="cute-badge">✨ Бяцхан гэнэтийн бэлэг ✨</div>
+      
+      <div class="hero-avatar">
+        <div class="avatar-ring">
+          <span class="hero-emoji">💌</span>
+        </div>
+      </div>
+
+      <h1 class="hero-title" id="heroTitle">Хөөе хөөрхнөө... ✨</h1>
+      <p class="hero-desc" id="heroSubtitle">
+        Энэ өдрүүдэд надтай хамт дурсамж бүтээж, болзоонд явах уу? 🌹
+      </p>
+
+      <div class="action-buttons-wrap">
+        <button id="btnYes" class="btn btn-primary pulse-btn">
+          <span>Тэгье ээ! 🥰</span>
+          <span class="btn-sub">Тэртээ тэргүй хүлээж байлаа</span>
+        </button>
+        <button id="btnNo" class="btn btn-secondary runaway-btn">
+          Үгүй ээ 😜
+        </button>
+      </div>
+
+      <p class="hint-text">
+        * "Үгүй" гэж дарахыг оролдоод үз дээ хэхэ 🙈
+      </p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 2: WHEN (DATE & TIME)                 -->
+    <!-- ============================================ -->
+    <section class="screen" id="screenDateTime">
+      <div class="screen-header">
+        <span class="section-badge">🗓️ 1-р алхам</span>
+        <h2>Хэзээ уулзвал чамд тухтай вэ?</h2>
+        <p>Би чамдаа зориулж цагаа бүрэн зохицуулна аа ✨</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📅 Болзох өдрөө сонгоорой:</label>
+        <div class="quick-pill-grid">
+          <button type="button" class="pill-btn date-pill active" data-date="Энэ амралтын өдрүүдээр">
+            🎈 Энэ амралтын өдрүүдээр
+          </button>
+          <button type="button" class="pill-btn date-pill" data-date="Ирэх 7 хоногийн баасан гариг">
+            ✨ Ирэх Баасанд
+          </button>
+          <button type="button" class="pill-btn date-pill" data-date="Ирэх амралтын өдрөөр">
+            🌸 Дараагийн амралтын өдөр
+          </button>
+        </div>
+        <div class="custom-date-wrap">
+          <span class="or-divider">эсвэл тусгай өдөр товлох:</span>
+          <input type="date" id="customDateInput" class="custom-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">⏰ Өдрийн ямар цагт хамгийн тохиромжтой вэ?</label>
+        <div class="choice-cards-grid grid-2">
+          <div class="choice-card active" data-time="Өдрийн хоол (12:00 - 15:00)">
+            <span class="card-icon">🌞</span>
+            <div class="card-info">
+              <div class="card-title">Өдрийн болзоо</div>
+              <div class="card-sub">Нарлаг өдрийн хоол & кофе</div>
+            </div>
+          </div>
+          <div class="choice-card" data-time="Оройн болзоо (18:00 - 21:00)">
+            <span class="card-icon">🌆</span>
+            <div class="card-info">
+              <div class="card-title">Оройн болзоо</div>
+              <div class="card-sub">Үдшийн хоол & дулаан яриа</div>
+            </div>
+          </div>
+          <div class="choice-card" data-time="Шөнийн хот харах (21:00-с хойш)">
+            <span class="card-icon">🌙</span>
+            <div class="card-info">
+              <div class="card-title">Шөнийн хот харах</div>
+              <div class="card-sub">Хот дээрээс тольдох & дуу</div>
+            </div>
+          </div>
+          <div class="choice-card" data-time="Чамд тааламжтай ямар ч цагт">
+            <span class="card-icon">⏳</span>
+            <div class="card-info">
+              <div class="card-title">Чиний цагаар</div>
+              <div class="card-sub">Чамайг хэзээ завтай үед</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button type="button" class="btn btn-outline btn-prev" data-to="screenHero">Буцах</button>
+        <button type="button" class="btn btn-primary btn-next" data-to="screenFood">Дараах ➔</button>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 3: FOOD / CUISINE                     -->
+    <!-- ============================================ -->
+    <section class="screen" id="screenFood">
+      <div class="screen-header">
+        <span class="section-badge">🍝 2-р алхам</span>
+        <h2>Юу идмээр байна даа?</h2>
+        <p>Амттай хоол болзооны хамгийн гоё хэсэг шүү дээ 😋</p>
+      </div>
+
+      <div class="choice-cards-grid grid-2" id="foodGrid">
+        <div class="choice-card active" data-food="Итали хоол & Паста 🍝">
+          <span class="card-icon">🍝</span>
+          <div class="card-info">
+            <div class="card-title">Итали & Паста</div>
+            <div class="card-sub">Романтик паста, амттай пицца</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-food="Суши & Япон хоол 🍣">
+          <span class="card-icon">🍣</span>
+          <div class="card-info">
+            <div class="card-title">Суши & Япон хоол</div>
+            <div class="card-sub">Шинэхэн суши, тухтай рамен</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-food="Стейк & Дарс 🥩">
+          <span class="card-icon">🥩</span>
+          <div class="card-info">
+            <div class="card-title">Стейк & Оройн зоог</div>
+            <div class="card-sub">Шүүслэг стейк, тухлаг орчин</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-food="Кофе шоп & Амттан ☕🍰">
+          <span class="card-icon">☕</span>
+          <div class="card-info">
+            <div class="card-title">Кофе & Чизкэйк</div>
+            <div class="card-sub">Гоё кофе шоп, амтат бялуу</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-food="Солонгос BBQ & Төөнөсөн мах 🥩🥢">
+          <span class="card-icon">🥢</span>
+          <div class="card-info">
+            <div class="card-title">Солонгос хоол & BBQ</div>
+            <div class="card-sub">Халуун мах шарж идэх</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-food="Намайг гайхшруулаарай ✨">
+          <span class="card-icon">✨</span>
+          <div class="card-info">
+            <div class="card-title">Гайхшруулаарай</div>
+            <div class="card-sub">Миний сонгосон нууц газар 😉</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button type="button" class="btn btn-outline btn-prev" data-to="screenDateTime">Буцах</button>
+        <button type="button" class="btn btn-primary btn-next" data-to="screenActivity">Дараах ➔</button>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 4: ACTIVITY                           -->
+    <!-- ============================================ -->
+    <section class="screen" id="screenActivity">
+      <div class="screen-header">
+        <span class="section-badge">🎡 3-р алхам</span>
+        <h2>Хоолны дараа юу хийвэл гоё вэ?</h2>
+        <p>Хамтдаа өнгөрүүлэх цаг мөч бүхэн үнэ цэнтэй ✨</p>
+      </div>
+
+      <div class="choice-cards-grid grid-2" id="activityGrid">
+        <div class="choice-card active" data-act="Үдэш хамтдаа алхах 🚶‍♀️✨">
+          <span class="card-icon">🚶‍♀️</span>
+          <div class="card-info">
+            <div class="card-title">Үдшийн алхалт</div>
+            <div class="card-sub">Гэрэлт гудамжаар ярилцаж алхах</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-act="Кино үзэх 🎬🍿">
+          <span class="card-icon">🎬</span>
+          <div class="card-info">
+            <div class="card-title">Кино үзэх</div>
+            <div class="card-sub">Попкорн идээд шинэ кино үзэх</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-act="Arcade тоглоом / Боулинг 🎳🎯">
+          <span class="card-icon">🎳</span>
+          <div class="card-info">
+            <div class="card-title">Хөгжилтэй тоглоом</div>
+            <div class="card-sub">Arcade тоглох эсвэл боулинг</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-act="Арт галерей / Үзэсгэлэн 🖼️🎨">
+          <span class="card-icon">🎨</span>
+          <div class="card-info">
+            <div class="card-title">Арт үзэсгэлэн</div>
+            <div class="card-sub">Зураг урлаг үзэж, зураг татуулах</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-act="Машинд дуу сонсож давхих 🚗🎶">
+          <span class="card-icon">🚗</span>
+          <div class="card-info">
+            <div class="card-title">Шөнийн drive</div>
+            <div class="card-sub">Гоё дуу тавиад хотоор давхих</div>
+          </div>
+        </div>
+
+        <div class="choice-card" data-act="Бүгдийг нь хиймээр байна 🥰💖">
+          <span class="card-icon">💖</span>
+          <div class="card-info">
+            <div class="card-title">Бүгдийг нь зэрэг!</div>
+            <div class="card-sub">Цаг хугацааг зогсоож байгаад л хэхэ</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button type="button" class="btn btn-outline btn-prev" data-to="screenFood">Буцах</button>
+        <button type="button" class="btn btn-primary btn-next" data-to="screenDetails">Дараах ➔</button>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 5: DETAILS & NOTES (FINAL FORM)       -->
+    <!-- ============================================ -->
+    <section class="screen" id="screenDetails">
+      <div class="screen-header">
+        <span class="section-badge">💌 Сүүлийн алхам</span>
+        <h2>Бараг бэлэн боллоо!</h2>
+        <p>Би чамдаа зориулж хамгийн төгс болзоог бэлдье 💕</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userNameInput">
+          👤 Чиний нэр (эсвэл өхөөрдсөн нэр чинь):
+        </label>
+        <input type="text" id="userNameInput" class="custom-input" placeholder="Жишээ: Хөөрхнөө, Намуунаа...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="musicNoteInput">
+          🎵 Болзоон дээр ямар дуу сонсмоор байна? (эсвэл онцгой хүсэлт):
+        </label>
+        <textarea id="musicNoteInput" class="custom-textarea" rows="3" placeholder="Дуртай дууны чинь нэр, цэцэгний сонголт, эсвэл хэлэхийг хүссэн ямар нэг зүйл..."></textarea>
+      </div>
+
+      <div class="summary-preview-box">
+        <div class="summary-title">Төлөвлөгөөний хураангуй ✨</div>
+        <div class="summary-item">
+          <span>📅 Огноо:</span>
+          <b id="summaryDate">-</b>
+        </div>
+        <div class="summary-item">
+          <span>⏰ Цаг:</span>
+          <b id="summaryTime">-</b>
+        </div>
+        <div class="summary-item">
+          <span>🍝 Хоол:</span>
+          <b id="summaryFood">-</b>
+        </div>
+        <div class="summary-item">
+          <span>🎡 Төлөвлөгөө:</span>
+          <b id="summaryActivity">-</b>
+        </div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button type="button" class="btn btn-outline btn-prev" data-to="screenActivity">Буцах</button>
+        <button type="button" id="btnSubmit" class="btn btn-primary pulse-btn">
+          <span>Илгээх 💌</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SCREEN 6: SUCCESS CELEBRATION                -->
+    <!-- ============================================ -->
+    <section class="screen" id="screenSuccess">
+      <div class="celebrate-badge">🎉 Урилгыг хүлээн авлаа! 🎉</div>
+      
+      <div class="success-heart-animation">
+        <span class="big-heart">💖</span>
+      </div>
+
+      <h1 class="success-title">Болзоо албан ёсоор товлогдлоо! 🥰</h1>
+      <p class="success-desc">
+        Бүх хариулт чинь надад амжилттай ирлээ. Чамайгаа харах тэр мөчийг тэсэн ядан хүлээж байя!
+      </p>
+
+      <!-- Romantic Boarding Pass / Date Ticket -->
+      <div class="date-ticket">
+        <div class="ticket-header">
+          <div class="ticket-brand">DATE PASS ✈️💖</div>
+          <div class="ticket-status">CONFIRMED ✅</div>
+        </div>
+        
+        <div class="ticket-body">
+          <div class="ticket-row">
+            <div class="ticket-col">
+              <span class="ticket-label">ЗОЧИН:</span>
+              <span class="ticket-val" id="ticketName">Хөөрхнөө</span>
+            </div>
+            <div class="ticket-col text-right">
+              <span class="ticket-label">УРЬСАН:</span>
+              <span class="ticket-val" id="ticketInviter">Би</span>
+            </div>
+          </div>
+
+          <div class="ticket-divider"></div>
+
+          <div class="ticket-row">
+            <div class="ticket-col">
+              <span class="ticket-label">ОГНОО & ЦАГ:</span>
+              <span class="ticket-val" id="ticketDateTime">-</span>
+            </div>
+            <div class="ticket-col text-right">
+              <span class="ticket-label">УУР АМЬСГАЛ:</span>
+              <span class="ticket-val">100% Романтик ✨</span>
+            </div>
+          </div>
+
+          <div class="ticket-row">
+            <div class="ticket-col">
+              <span class="ticket-label">ХООЛ & ТӨЛӨВЛӨГӨӨ:</span>
+              <span class="ticket-val" id="ticketPlan">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-footer">
+          <span>🎟️ Код: LOVE-2026-FOREVER</span>
+          <span>📍 Чиний инээмсэглэлд зориулав</span>
+        </div>
+      </div>
+
+      <div class="closing-quote">
+        "Дэлхий дээрх хамгийн сайхан зүйл бол чамтай өнгөрүүлэх хором мөч бүр... ✨🌹"
+      </div>
+
+      <button type="button" id="btnRestart" class="btn btn-outline" style="margin-top: 1rem;">
+        Дахин харах / Сонголтоо засах 🔄
+      </button>
+    </section>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Хайрын захидлыг хүргэж байна... 🚀💌</div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- App scripts -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

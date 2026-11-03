@@ -1,0 +1,18 @@
+{
+  "name": "date-invite-web",
+  "version": "1.0.0",
+  "description": "Болзоонд урих интерактив веб төсөл. Google Sheets интеграцитай бөгөөд Vercel дээр шууд байршуулахад бэлэн.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "date-invite",
+    "interactive",
+    "romantic",
+    "google-sheets",
+    "vercel"
+  ],
+  "author": "",
+  "license": "MIT"
+}
