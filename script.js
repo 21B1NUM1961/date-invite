@@ -457,7 +457,7 @@
       showToast("Ая түр зогслоо ⏸️");
     } else {
       startMusic();
-      showToast("Уянгалаг романтик ая эхэллээ 🎶💖");
+      showToast("Ая эхэллээ 🎶💖");
     }
   });
 
